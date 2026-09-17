@@ -60,6 +60,14 @@ describe('MarkdownText', () => {
     expect(screen.getByRole('link', { name: 'https://deepseek.com' })).toBeTruthy()
   })
 
+  it('renders single-tilde spans as literal text, keeping double-tilde strikethrough', () => {
+    const { container } = render(<MarkdownText text={'区间 ~100~ 到 ~200~ 之间，~~真的删除~~ 才是删除线'} />)
+    expect(container.querySelectorAll('del')).toHaveLength(1)
+    expect(container.querySelector('del')?.textContent).toBe('真的删除')
+    expect(container.textContent).toContain('~100~')
+    expect(container.textContent).toContain('~200~')
+  })
+
   it('closes punctuation-terminated strong emphasis before adjacent CJK text', () => {
     const cases = [
       ['**注意：**内容', '注意：'],
