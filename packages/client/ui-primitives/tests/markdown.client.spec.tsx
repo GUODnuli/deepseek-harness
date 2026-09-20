@@ -60,6 +60,13 @@ describe('MarkdownText', () => {
     expect(screen.getByRole('link', { name: 'https://deepseek.com' })).toBeTruthy()
   })
 
+  it('keeps tildes literal inside inline code and honors backslash escapes', () => {
+    const { container } = render(<MarkdownText text={'代码 `~x~` 原样，转义 \~y\~ 输出波浪号'} />)
+    expect(container.querySelectorAll('del')).toHaveLength(0)
+    expect(container.querySelector('code')?.textContent).toBe('~x~')
+    expect(container.textContent).toContain('~y~')
+  })
+
   it('renders single-tilde spans as literal text, keeping double-tilde strikethrough', () => {
     const { container } = render(<MarkdownText text={'区间 ~100~ 到 ~200~ 之间，~~真的删除~~ 才是删除线'} />)
     expect(container.querySelectorAll('del')).toHaveLength(1)
